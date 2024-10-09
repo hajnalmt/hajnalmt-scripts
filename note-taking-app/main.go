@@ -1,14 +1,13 @@
 package main
 
 import (
-	"errors"
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
 
 	"hajnalmt.hu/note/note"
 )
-
-type Note struct {
-}
 
 func main() {
 	title, content := getNoteData()
@@ -19,21 +18,24 @@ func main() {
 		return
 	}
 
+	userNote.Display()
 }
 
-func getNodeData() (string, string) {
+func getNoteData() (string, string) {
 	title := getUserInput("Note title:")
 	content := getUserInput("Note content:")
 	return title, content
 }
 
-func getUserInput(prompt string) (string, error) {
-	var input string
-	fmt.Print(prompt)
-	fmt.Scanln(&input)
-	if input == "" {
-		fmt.Println("Invalid input")
-		return "", errors.New("invalid input")
+func getUserInput(prompt string) string {
+	fmt.Println(prompt)
+	reader := bufio.NewReader(os.Stdin)
+	text, err := reader.ReadString('\n')
+	if err != nil {
+		return ""
 	}
-	return input, nil
+
+	text = strings.TrimSuffix(text, "\n")
+	text = strings.TrimSuffix(text, "\r")
+	return text
 }
