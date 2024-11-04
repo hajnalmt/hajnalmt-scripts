@@ -10,21 +10,21 @@ import (
 )
 
 type Note struct {
-	title     string
-	content   string
-	createdAt time.Time
+	Title     string
+	Content   string
+	CreatedAt time.Time
 }
 
 func New(title, content string) (Note, error) {
 	if title == "" || content == "" {
 		return Note{}, errors.New("title and content cannot be empty")
 	}
-	return Note{title: title, content: content, createdAt: time.Now()}, nil
+	return Note{Title: title, Content: content, CreatedAt: time.Now()}, nil
 }
 
 func (note Note) Save() error {
-	filename := strings.ReplaceAll(note.title, " ", "_")
-	filename = strings.ToLower(filename)
+	filename := strings.ReplaceAll(note.Title, " ", "_")
+	filename = strings.ToLower(filename) + ".json"
 	json, err := json.Marshal(note)
 	if err != nil {
 		return err
@@ -34,5 +34,5 @@ func (note Note) Save() error {
 }
 
 func (note Note) Display() {
-	fmt.Printf("Your note titled %v has the following content:\n\n%v\n", note.title, note.content)
+	fmt.Printf("Your note titled %v has the following content:\n\n%v\n", note.Title, note.Content)
 }
