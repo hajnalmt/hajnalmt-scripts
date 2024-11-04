@@ -7,16 +7,33 @@ import (
 	"strings"
 
 	"hajnalmt.hu/note/note"
+	"hajnalmt.hu/note/todo"
 )
 
 func main() {
 	title, content := getNoteData()
+	todoContent := getUserInput("Todo content:")
+
+	todo, err := todo.New(todoContent)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	userNote, err := note.New(title, content)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
+	todo.Display()
+	err = todo.Save()
+
+	if err != nil {
+		fmt.Println("Error saving todo:", err)
+	}
+
+	fmt.Println("Todo saved successfully!")
 
 	userNote.Display()
 
