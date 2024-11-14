@@ -10,6 +10,15 @@ import (
 	"hajnalmt.hu/note/todo"
 )
 
+type saver interface {
+	Save() error
+}
+
+type outputtable interface {
+	saver
+	Display()
+}
+
 func main() {
 	title, content := getNoteData()
 	todoContent := getUserInput("Todo content:")
@@ -26,8 +35,7 @@ func main() {
 		return
 	}
 
-	todo.Display()
-	err = todo.Save()
+	err = outputData(todo)
 
 	if err != nil {
 		fmt.Println("Error saving todo:", err)
@@ -35,14 +43,26 @@ func main() {
 
 	fmt.Println("Todo saved successfully!")
 
-	userNote.Display()
-
-	err = userNote.Save()
+	err = outputData(userNote)
 	if err != nil {
-		fmt.Println("Error saving note:", err)
+		fmt.Println(err)
+	}
+}
+
+func saveData(data saver) error {
+	err := data.Save()
+	if err != nil {
+		fmt.Println("Saving the note failed data:")
+		return err
 	}
 
-	fmt.Println("Note saved successfully!")
+	fmt.Println("Data saved successfully!")
+	return nil
+}
+
+func outputData(data outputtable) error {
+	data.Display()
+	return saveData(data)
 }
 
 func getNoteData() (string, string) {
