@@ -3,8 +3,8 @@ package routes
 import (
 	"net/http"
 
-	"example.com/rest-api/models"
 	"github.com/gin-gonic/gin"
+	"hajnalmt.hu/gin-example/models"
 )
 
 func signup(context *gin.Context) {
