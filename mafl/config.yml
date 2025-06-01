@@ -50,7 +50,7 @@ services:
       tags:
         - Cloud
     - title: Stirling PDF
-      url: https://stirling.hajnalmt.hu
+      link: https://stirling.hajnalmt.hu
       icon:
         url: https://raw.githubusercontent.com/Stirling-Tools/Stirling-PDF/main/docs/stirling.png
         wrap: true
