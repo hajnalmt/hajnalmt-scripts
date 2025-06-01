@@ -1,0 +1,91 @@
+title: Hajnal Lab
+tags:
+  - name: Home
+    color: green
+  - name: Media
+    color: red
+  - name: Device
+    color: blue
+  - name: Cloud
+    color: purple
+
+services:
+  Home:
+    - title: Home Assistant
+      description: Otthon automatizációs rendszer
+      link: 'https://home.hajnalmt.hu'
+      icon:
+        name: simple-icons:homeassistant
+        wrap: true
+        color: '#3dbcf3'
+      tags:
+      - Home     
+    - title: Proxmox Virtual Environment
+      description: Nyíltforráskódú virtualizációs platform
+      link: 'https://pve.hajnalmt.hu'
+      icon:
+        wrap: true
+        color: '#3dbcf3'
+        name: devicon:proxmox-wordmark
+      tags:
+        - Home
+
+  Cloud:
+    - title: Deluge
+      description: Deluge torrent szerver
+      link: 'https://deluge.hajnalmt.hu'
+      icon: 
+        name: simple-icons:deluge
+        wrap: true
+        color: '#4000e4'
+      tags:
+        - Cloud
+    - title: Nginx Proxy Manager
+      description: SSL- és proxykezelő
+      link: 'https://npm.hajnalmt.hu'
+      icon:
+        name: simple-icons:nginxproxymanager
+        wrap: true
+        color: '#f16161'
+      tags:
+        - Cloud
+    - title: Stirling PDF
+      url: https://stirling.hajnalmt.hu
+      icon:
+        url: https://raw.githubusercontent.com/Stirling-Tools/Stirling-PDF/main/docs/stirling.png
+        wrap: true
+      description: Webalapú PDF-manipulációs eszköz
+      tags:
+        - Cloud
+
+  Media:
+    - title: Jellyfin
+      link: 'https://jellyfin.hajnalmt.hu'
+      icon:
+        name: openmoji:jellyfin
+        wrap: true
+        color: '#3dbcf3'
+      description: Nyílt forráskódú médiaszerver
+      tags:
+        - Media
+
+    - title: Plex
+      link: 'https://plex.hajnalmt.hu'
+      icon:
+        name: cbi:plex
+        wrap: true
+        color: '#e45900'
+      description: Médiaszerver
+      tags:
+        - Media
+
+  Device:
+    - title: UniFi Dream Machine Pro Router
+      description: Ubiquiti router
+      link: 'https://unifi.hajnalmt.hu'
+      icon:
+        name: simple-icons:ubiquiti
+        wrap: true
+        color: '#005de4'
+      tags:
+        - Device
