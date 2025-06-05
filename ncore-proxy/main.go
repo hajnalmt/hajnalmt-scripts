@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"io"
 	"log"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -43,8 +45,8 @@ func loginToNCore(username, password string) error {
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
-	if !bytes.Contains(body, []byte("hunolulu")) { // or any string that only appears when logged in
-		log.Println("❌ Login likely failed — no 'Kijelentkezés' found in response.")
+	if !bytes.Contains(body, []byte("Helyezés")) { // or any string that only appears when logged in
+		log.Println("❌ Login likely failed — no 'Helyezés' found in response.")
 	} else {
 		log.Println("✅ Login successful (HTML contains logged-in marker)")
 	}
@@ -68,42 +70,83 @@ func main() {
 		log.Fatalf("Login failed: %v", err)
 	}
 
-	target, _ := url.Parse(baseURL)
+	ncoreURL, _ := url.Parse(baseURL)
+	staticURL, _ := url.Parse("https://static.ncore.pro")
 
-	proxy := &httputil.ReverseProxy{
+	mainProxy := &httputil.ReverseProxy{
 		Director: func(req *http.Request) {
-			req.URL.Scheme = target.Scheme
-			req.URL.Host = target.Host
-			req.Host = target.Host
+			req.URL.Scheme = ncoreURL.Scheme
+			req.URL.Host = ncoreURL.Host
+			req.Host = ncoreURL.Host
 			req.Header.Set("User-Agent", "Mozilla/5.0")
 
 			// ✅ Inject PHPSESSID cookie manually from the jar
-			cookies := client.Jar.Cookies(target)
-			for _, cookie := range cookies {
-				if cookie.Name == "PHPSESSID" {
-					req.AddCookie(cookie)
-				}
+			for _, c := range client.Jar.Cookies(ncoreURL) {
+				req.AddCookie(c)
 			}
 		},
 
 		ModifyResponse: func(resp *http.Response) error {
-			location := resp.Header.Get("Location")
+			contentType := resp.Header.Get("Content-Type")
+			if strings.HasPrefix(contentType, "text/html") {
+				var body []byte
+				var err error
 
-			if location != "" {
-				log.Printf("🔁 Redirected to: %s (status: %d)\n", location, resp.StatusCode)
-				if strings.HasPrefix(location, baseURL) {
-					// Absolute redirect like: https://ncore.pro/somepage
-					resp.Header.Set("Location", strings.Replace(location, baseURL, "http://localhost:8080", 1))
-				} else if strings.HasPrefix(location, "/") {
-					// Relative redirect like: /login.php
-					resp.Header.Set("Location", "http://localhost:8080"+location)
+				// Decompress if gzip encoded
+				if resp.Header.Get("Content-Encoding") == "gzip" {
+					gzReader, err := gzip.NewReader(resp.Body)
+					if err != nil {
+						return err
+					}
+					body, err = io.ReadAll(gzReader)
+					resp.Body.Close()
+					gzReader.Close()
+					resp.Header.Del("Content-Encoding") // because we're re-encoding uncompressed
+				} else {
+					body, err = io.ReadAll(resp.Body)
+					resp.Body.Close()
 				}
+
+				if err != nil {
+					return err
+				}
+
+				modified := bytes.ReplaceAll(body, []byte("https://static.ncore.pro"), []byte("/proxy-static"))
+				log.Println(string(modified)) // only for debugging!
+				resp.Body = io.NopCloser(bytes.NewReader(modified))
+				resp.ContentLength = int64(len(modified))
+				resp.Header.Set("Content-Length", strconv.Itoa(len(modified)))
+			}
+
+			// Location rewrite
+			if loc := resp.Header.Get("Location"); strings.HasPrefix(loc, baseURL) {
+				resp.Header.Set("Location", strings.Replace(loc, baseURL, "http://localhost:8080", 1))
 			}
 
 			return nil
 		},
 	}
 
+	// Proxy for static assets under /proxy-static/*
+	staticProxy := &httputil.ReverseProxy{
+		Director: func(req *http.Request) {
+			req.URL.Scheme = staticURL.Scheme
+			req.URL.Host = staticURL.Host
+			req.Host = staticURL.Host
+			req.URL.Path = strings.TrimPrefix(req.URL.Path, "/proxy-static")
+			req.Header.Set("Referer", "https://ncore.pro/")
+			req.Header.Set("User-Agent", "Mozilla/5.0")
+		},
+	}
+
+	http.HandleFunc("/proxy-static/", func(w http.ResponseWriter, r *http.Request) {
+		staticProxy.ServeHTTP(w, r)
+	})
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		mainProxy.ServeHTTP(w, r)
+	})
+
 	log.Println("🚀 nCore proxy running at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", proxy))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
