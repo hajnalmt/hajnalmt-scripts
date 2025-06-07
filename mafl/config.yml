@@ -31,6 +31,15 @@ services:
         - Home
 
   Cloud:
+    - title: nCore
+      description: Proxy kliens az nCore domain felé
+      link: 'https://ncore.hajnalmt.hu'
+      icon:
+        url: ./favicons/apple-touch-icon.png
+        wrap: true
+        color: '#4000e4'
+      tags:
+        - Cloud
     - title: Deluge
       description: Deluge torrent szerver
       link: 'https://deluge.hajnalmt.hu'
