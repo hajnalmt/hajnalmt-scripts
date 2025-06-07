@@ -88,12 +88,14 @@ func main() {
 
 		ModifyResponse: func(resp *http.Response) error {
 			contentType := resp.Header.Get("Content-Type")
-			if strings.HasPrefix(contentType, "text/html") {
+			if strings.Contains(contentType, "text/html") || strings.Contains(contentType, "javascript") {
 				var body []byte
 				var err error
 
 				// Decompress if gzip encoded
 				if resp.Header.Get("Content-Encoding") == "gzip" {
+					log.Println("📦 MainProxy:  gzip-encoded", resp.Request.URL)
+
 					gzReader, err := gzip.NewReader(resp.Body)
 					if err != nil {
 						return err
@@ -112,7 +114,10 @@ func main() {
 				}
 
 				modified := bytes.ReplaceAll(body, []byte("https://static.ncore.pro"), []byte("/proxy-static"))
-				log.Println(string(modified)) // only for debugging!
+				if !bytes.Equal(body, modified) {
+					log.Printf("🔁 MainProxy rewrote static URLs in %s", resp.Request.URL.Path)
+				}
+
 				resp.Body = io.NopCloser(bytes.NewReader(modified))
 				resp.ContentLength = int64(len(modified))
 				resp.Header.Set("Content-Length", strconv.Itoa(len(modified)))
@@ -136,6 +141,46 @@ func main() {
 			req.URL.Path = strings.TrimPrefix(req.URL.Path, "/proxy-static")
 			req.Header.Set("Referer", "https://ncore.pro/")
 			req.Header.Set("User-Agent", "Mozilla/5.0")
+		},
+
+		ModifyResponse: func(resp *http.Response) error {
+			contentType := resp.Header.Get("Content-Type")
+			if !(strings.Contains(contentType, "javascript") || strings.Contains(contentType, "css")) {
+				return nil
+			}
+
+			var body []byte
+			var err error
+
+			if resp.Header.Get("Content-Encoding") == "gzip" {
+				log.Println("📦 StaticProxy: gzip-encoded", resp.Request.URL)
+				gzReader, err := gzip.NewReader(resp.Body)
+				if err != nil {
+					return err
+				}
+				body, err = io.ReadAll(gzReader)
+				resp.Body.Close()
+				gzReader.Close()
+				resp.Header.Del("Content-Encoding")
+			} else {
+				body, err = io.ReadAll(resp.Body)
+				resp.Body.Close()
+			}
+
+			if err != nil {
+				return err
+			}
+
+			modified := bytes.ReplaceAll(body, []byte("https://static.ncore.pro"), []byte("/proxy-static"))
+			if !bytes.Equal(body, modified) {
+				log.Printf("🔁 StaticProxy rewrote static URLs in %s", resp.Request.URL.Path)
+			}
+
+			resp.Body = io.NopCloser(bytes.NewReader(modified))
+			resp.ContentLength = int64(len(modified))
+			resp.Header.Set("Content-Length", strconv.Itoa(len(modified)))
+
+			return nil
 		},
 	}
 
