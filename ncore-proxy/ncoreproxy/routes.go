@@ -15,4 +15,5 @@ func RegisterRoutes(client *http.Client) {
 	})
 
 	http.HandleFunc("/exit.php", HandleBlockedLogout)
+	http.HandleFunc("/invites", HandleBlockedLogout)
 }
