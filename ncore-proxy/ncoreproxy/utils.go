@@ -30,6 +30,9 @@ func rewriteResponse(tag string) func(*http.Response) error {
 			resp.Body.Close()
 			gzReader.Close()
 			resp.Header.Del("Content-Encoding")
+			if err != nil {
+				return err
+			}
 		} else {
 			body, err = io.ReadAll(resp.Body)
 			resp.Body.Close()
