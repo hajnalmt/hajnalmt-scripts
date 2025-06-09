@@ -12,6 +12,7 @@ func RegisterRoutes(client *http.Client) {
 
 	http.HandleFunc("/exit.php", HandleBlockedLogout)
 	http.HandleFunc("/invites", HandleBlockedLogout)
+	http.HandleFunc("/shop", HandleBlockedLogout)
 	http.HandleFunc("/login.php", func(w http.ResponseWriter, r *http.Request) {
 		Relogin(client, w, r)
 	})
