@@ -54,6 +54,24 @@ func Login(client *http.Client) error {
 	return nil
 }
 
+func Relogin(client *http.Client, w http.ResponseWriter, r *http.Request) error {
+	err := Login(client)
+	if err != nil {
+		log.Printf("🔐 Relogin failed: %v", err)
+		http.Error(w, "Automatikus bejelentkezés sikertelen 😢", http.StatusInternalServerError)
+		return err
+	}
+
+	target := r.Referer()
+	if target == "" || target == "/login.php" {
+		target = "/"
+	}
+
+	log.Printf("🔐 Relogin successful — redirecting to %s", target)
+	http.Redirect(w, r, target, http.StatusFound)
+	return nil
+}
+
 func ScheduleRelogin(client *http.Client) {
 	go func() {
 		for {

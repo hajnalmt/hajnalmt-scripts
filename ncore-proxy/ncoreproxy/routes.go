@@ -10,10 +10,13 @@ func RegisterRoutes(client *http.Client) {
 		StaticProxy().ServeHTTP(w, r)
 	})
 
+	http.HandleFunc("/exit.php", HandleBlockedLogout)
+	http.HandleFunc("/invites", HandleBlockedLogout)
+	http.HandleFunc("/login.php", func(w http.ResponseWriter, r *http.Request) {
+		Relogin(client, w, r)
+	})
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		MainProxy(client).ServeHTTP(w, r)
 	})
-
-	http.HandleFunc("/exit.php", HandleBlockedLogout)
-	http.HandleFunc("/invites", HandleBlockedLogout)
 }
