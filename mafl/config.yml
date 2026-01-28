@@ -78,16 +78,6 @@ services:
       tags:
         - Media
 
-    - title: Plex
-      link: 'https://plex.hajnalmt.hu'
-      icon:
-        name: cbi:plex
-        wrap: true
-        color: '#e45900'
-      description: Médiaszerver
-      tags:
-        - Media
-
   Device:
     - title: UniFi Dream Machine Pro Router
       description: Ubiquiti router
