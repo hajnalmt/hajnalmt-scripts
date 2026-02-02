@@ -51,7 +51,7 @@ func HandleBlockedLogout(w http.ResponseWriter, r *http.Request) {
 </head>
 <body>
   <div class="container">
-    <h1>🚫 Nem mész te innen sehova!</h1>
+    <h1>🚫 Nem mész te innen sehova! Szép próba.</h1>
     <p>Ez túl jó móka, hogy csak úgy kilépj.</p>
     <p><em>A munkameneted biztonságban van. Ülj le, nyugi van.</em></p>
     <a href="/">⏪ Vissza a főoldalra</a>
