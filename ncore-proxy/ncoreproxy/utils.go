@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -13,7 +12,9 @@ import (
 func rewriteResponse(tag string) func(*http.Response) error {
 	return func(resp *http.Response) error {
 		contentType := resp.Header.Get("Content-Type")
-		if !(strings.Contains(contentType, "html") || strings.Contains(contentType, "javascript") || strings.Contains(contentType, "css")) {
+		shouldRewrite := strings.Contains(contentType, "html") || strings.Contains(contentType, "javascript") || strings.Contains(contentType, "css")
+
+		if !shouldRewrite {
 			return nil
 		}
 
@@ -21,7 +22,6 @@ func rewriteResponse(tag string) func(*http.Response) error {
 		var err error
 
 		if resp.Header.Get("Content-Encoding") == "gzip" {
-			log.Printf("📦 %s: gzip-encoded %s", tag, resp.Request.URL)
 			gzReader, err := gzip.NewReader(resp.Body)
 			if err != nil {
 				return err
@@ -41,9 +41,31 @@ func rewriteResponse(tag string) func(*http.Response) error {
 			return err
 		}
 
-		modified := bytes.ReplaceAll(body, []byte(staticOrigin), []byte("/proxy-static"))
-		if !bytes.Equal(body, modified) {
-			log.Printf("🔁 %s rewrote content in %s", tag, resp.Request.URL.Path)
+		// Replace all variations of static.ncore.pro URLs
+		modified := bytes.ReplaceAll(body, []byte("https://static.ncore.pro"), []byte("/proxy-static"))
+		modified = bytes.ReplaceAll(modified, []byte("http://static.ncore.pro"), []byte("/proxy-static"))
+		modified = bytes.ReplaceAll(modified, []byte("//static.ncore.pro"), []byte("/proxy-static"))
+
+		// Special handling for CSS/JS files from StaticProxy
+		// These files contain absolute paths like url(/styles/...) or "/static/..."
+		// which the browser will resolve relative to localhost:8080
+		// We need to prefix them with /proxy-static so they go through our proxy
+		if tag == "StaticProxy" && (strings.Contains(contentType, "css") || strings.Contains(contentType, "javascript")) {
+			// For CSS: url(/styles/...) → url(/proxy-static/styles/...)
+			modified = bytes.ReplaceAll(modified, []byte("url(/styles/"), []byte("url(/proxy-static/styles/"))
+			modified = bytes.ReplaceAll(modified, []byte("url('/styles/"), []byte("url('/proxy-static/styles/"))
+			modified = bytes.ReplaceAll(modified, []byte(`url("/styles/`), []byte(`url("/proxy-static/styles/`))
+
+			// For CSS: url(/static/...) → url(/proxy-static/static/...)
+			modified = bytes.ReplaceAll(modified, []byte("url(/static/"), []byte("url(/proxy-static/static/"))
+			modified = bytes.ReplaceAll(modified, []byte("url('/static/"), []byte("url('/proxy-static/static/"))
+			modified = bytes.ReplaceAll(modified, []byte(`url("/static/`), []byte(`url("/proxy-static/static/`))
+
+			// For JS: "/static/..." or '/static/...'
+			modified = bytes.ReplaceAll(modified, []byte(`"/static/`), []byte(`"/proxy-static/static/`))
+			modified = bytes.ReplaceAll(modified, []byte(`'/static/`), []byte(`'/proxy-static/static/`))
+			modified = bytes.ReplaceAll(modified, []byte(`"/styles/`), []byte(`"/proxy-static/styles/`))
+			modified = bytes.ReplaceAll(modified, []byte(`'/styles/`), []byte(`'/proxy-static/styles/`))
 		}
 
 		resp.Body = io.NopCloser(bytes.NewReader(modified))

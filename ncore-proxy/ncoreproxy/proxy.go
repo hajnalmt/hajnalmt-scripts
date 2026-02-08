@@ -18,6 +18,8 @@ func MainProxy(client *http.Client) *httputil.ReverseProxy {
 			req.URL.Host = ncoreURL.Host
 			req.Host = ncoreURL.Host
 			req.Header.Set("User-Agent", "Mozilla/5.0")
+			// Remove Accept-Encoding to get uncompressed responses that we can modify
+			req.Header.Del("Accept-Encoding")
 			for _, c := range client.Jar.Cookies(ncoreURL) {
 				req.AddCookie(c)
 			}
@@ -37,6 +39,8 @@ func StaticProxy() *httputil.ReverseProxy {
 			req.URL.Path = strings.TrimPrefix(req.URL.Path, "/proxy-static")
 			req.Header.Set("Referer", baseURL+"/")
 			req.Header.Set("User-Agent", "Mozilla/5.0")
+			// Remove Accept-Encoding to get uncompressed responses that we can modify
+			req.Header.Del("Accept-Encoding")
 		},
 		ModifyResponse: rewriteResponse("StaticProxy"),
 	}
