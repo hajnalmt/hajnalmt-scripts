@@ -4,6 +4,23 @@ A small, repeatable practice project for rebuilding live-coding muscle memory wi
 
 The goal is not to prove engineering worth with fabricated puzzles. The goal is to build enough interview fluency that small coding tasks do not falsely filter out strong senior/MLOps/platform skills.
 
+This project is anti-humiliation armor, not an endorsement of bad interviews.
+
+## Why this exists
+
+Traditional live coding interviews often measure recent practice, syntax recall, stress tolerance, and familiarity with interview patterns more than senior engineering judgment. In an AI-assisted engineering world, the more valuable skills are problem framing, edge-case discovery, code review, validation, debugging, and integration.
+
+AI can generate small functions quickly. The useful human skill is still being able to:
+
+- define the required behavior precisely,
+- notice missing edge cases,
+- evaluate generated code,
+- write tests,
+- debug failures,
+- and pass outdated interview gates when necessary.
+
+Still, these tasks remain common hiring gates. The goal is not to become a LeetCode athlete. The goal is to build enough practical fluency that simple fabricated tasks do not unfairly block access to roles where deeper MLOps, platform, architecture, and review skills matter.
+
 ## Principles
 
 - Practice practical interview-shaped tasks, not trivia.
@@ -31,6 +48,10 @@ Target time: 35-50 minutes.
    - Use table-driven tests.
 4. Run tests and fix issues.
 5. Add a short note to the mistake log.
+
+The goal is not memorizing every syntax detail. The goal is practicing the loop:
+
+clarify -> examples -> edge cases -> implementation -> tests -> debug -> explanation
 
 ## Spaced repetition schedule
 
@@ -104,6 +125,8 @@ Each problem should answer these sections:
 9. Parse duration strings like `1h30m20s`
 10. Rate limiter per user
 
+These are still artificial, but they are closer to practical infra/platform work than many abstract puzzle tasks.
+
 ## Interview muscle memory sequence
 
 Use this sequence every time, even when the problem looks simple:
@@ -143,14 +166,26 @@ Practice these in every Go solution:
 - `regexp.MustCompile`
 - `sort.Slice`
 - table-driven tests
+- `t.Run`
 - small structs
-- explicit error handling
+- explicit error returns
+
+Every Go solution should have table-driven tests.
 
 ## Weekly pressure practice
 
 Once per week, solve one previous problem in 30 minutes while speaking aloud.
 
 This is not because live-coding interviews are good. It is nervous-system exposure: training the body not to interpret a small implementation task as danger.
+
+Use this script:
+
+1. Restate the problem.
+2. Ask or write assumptions.
+3. Give examples.
+4. Implement the simplest correct version.
+5. Test edge cases.
+6. Explain complexity and tradeoffs.
 
 ## Suggested first problem: valid number
 
@@ -179,15 +214,28 @@ Test cases:
 | `"-+3"` | `false` |
 | `"95a54e53"` | `false` |
 
-## Why this exists
+## Mistake log format
 
-AI can generate small functions quickly. The useful human skill is still being able to:
+Example:
 
-- define the required behavior precisely,
-- notice missing edge cases,
-- evaluate generated code,
-- write tests,
-- debug failures,
-- and pass outdated interview gates when necessary.
+```text
+2026-07-03 - valid number
+Forgot Python: re.fullmatch exists.
+Forgot Go: regexp.MatchString returns (bool, error), or use MustCompile.
+Missed edge case: "." should be false.
+Pattern: validation grammar with optional sign, decimal part, and exponent.
+```
 
-This project is anti-humiliation armor, not an endorsement of bad interviews.
+The mistake log is the most important artifact. It turns forgetting into training data instead of shame.
+
+## Rust decision
+
+Do not add Rust to this practice loop yet.
+
+Rust is useful, but for job-switch readiness the highest-return path is Python plus Go plus interview composure. Rust can be added later after this loop is stable.
+
+## Principle
+
+This project does not concede that live coding interviews are a good senior-engineering evaluation method.
+
+It exists because some companies still use them, and passing the gate preserves optionality.
