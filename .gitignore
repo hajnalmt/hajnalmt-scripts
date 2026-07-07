@@ -35,3 +35,4 @@ invoice-automation/logs/
 invoice-automation/state/
 invoice-automation/config.yaml
 invoice-automation/rclone.conf
+invoice-automation/secrets/

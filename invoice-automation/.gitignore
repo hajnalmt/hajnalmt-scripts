@@ -8,4 +8,5 @@ state/*.yml
 .env
 config.yaml
 rclone.conf
+secrets/
 *.tmp
