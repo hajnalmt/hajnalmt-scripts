@@ -27,3 +27,11 @@ go.work.sum
 # gin-example
 gin-example/api.db
 
+# invoice-automation local/runtime files
+invoice-automation/node_modules/
+invoice-automation/browser-profiles/
+invoice-automation/downloads/
+invoice-automation/logs/
+invoice-automation/state/
+invoice-automation/config.yaml
+invoice-automation/rclone.conf

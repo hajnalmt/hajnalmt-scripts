@@ -1,0 +1,20 @@
+{
+  "name": "invoice-automation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monthly portal invoice downloader for OpenAI and Telekom with Google Drive upload via rclone.",
+  "type": "module",
+  "scripts": {
+    "install:browsers": "playwright install chromium",
+    "doctor": "node scripts/doctor.mjs",
+    "smoke:playwright": "node scripts/smoke-playwright.mjs",
+    "login:openai": "node scripts/login-openai.mjs",
+    "login:telekom": "node scripts/login-telekom.mjs"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.55.0",
+    "playwright": "^1.55.0",
+    "yaml": "^2.8.0"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,16 @@
+drive:
+  rclone_remote: gdrive
+  base_folder: Invoices
+
+providers:
+  openai:
+    enabled: true
+    portal_url: https://platform.openai.com/settings/organization/billing/history
+    browser_profile: browser-profiles/openai
+    output_prefix: OpenAI
+
+  telekom:
+    enabled: true
+    portal_url: https://www.telekom.hu/fiokom
+    browser_profile: browser-profiles/telekom
+    output_prefix: Telekom

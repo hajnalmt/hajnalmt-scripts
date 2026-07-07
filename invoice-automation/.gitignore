@@ -1,0 +1,11 @@
+node_modules/
+downloads/
+browser-profiles/
+logs/
+state/*.json
+state/*.yaml
+state/*.yml
+.env
+config.yaml
+rclone.conf
+*.tmp
