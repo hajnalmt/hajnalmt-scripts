@@ -73,6 +73,8 @@ interview-prep/
     python.md
     go.md
   mistake-log.md
+  postmortems/
+    2026-07-10-arm-valid-number.md
   problems/
     001-valid-number/
       README.md
@@ -85,6 +87,10 @@ interview-prep/
         solution_test.go
       notes.md
 ```
+
+## Postmortems
+
+- [Arm interview: valid number](postmortems/2026-07-10-arm-valid-number.md)
 
 ## Problem template
 
