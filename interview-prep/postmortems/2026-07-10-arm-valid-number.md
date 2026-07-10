@@ -19,6 +19,8 @@ A function skeleton was provided. I started writing a `for` loop, but I froze on
 - Then they asked me to extend it again with exponent support using `e` / `E`.
 - I did not think about optional signs, floating point formats, or exponent notation up front.
 - I still did not remember the `not in` syntax afterward, which is a useful signal: my mind forgets easily googleable syntax under pressure.
+- I did not remember `enumerate` for index-based loops.
+- For sign handling, I thought of slicing off a leading minus with `s = s[1:]`, but did not think about a leading plus.
 
 ## Important interpretation
 
@@ -128,6 +130,26 @@ if ch is not in "0123456789":
     return False
 ```
 
+## Index-based loop syntax
+
+The Python syntax I forgot for getting both index and character is `enumerate`:
+
+```python
+for i, ch in enumerate(s):
+    print(i, ch)
+```
+
+This is useful when validating signs because `+` / `-` are only valid at the beginning, or immediately after `e` / `E`.
+
+A first instinct was to handle a leading minus by slicing:
+
+```python
+if s and s[0] == "-":
+    s = s[1:]
+```
+
+That can work for a tiny first version, but it misses `+` unless handled too, and it becomes awkward once exponent signs are added, such as `1e-3` or `1e+3`.
+
 ## Python regex solution
 
 If the accepted grammar is normal decimal/scientific notation, a compact regex solution is:
@@ -157,6 +179,9 @@ Forgot / missed:
 
 - Regex did not come to mind.
 - Python `not in` membership-check syntax was not automatic under pressure.
+- Python `enumerate(s)` for index-based loops was not automatic under pressure.
+- I used/thought of `s = s[1:]` for a leading minus, but did not think about leading plus.
+- That slicing approach is okay for a first integer-only version, but it does not scale cleanly to exponent signs like `1e-3`.
 - The correct Python membership check is `if ch not in "0123456789":`, not `if ch is not in "0123456789":`.
 - I did not think about signs (`+` / `-`) at the beginning.
 - I did not think about floating point forms such as `1.`, `.1`, and `+.8` at the beginning.
