@@ -85,6 +85,67 @@ For this problem, the examples should include:
 | `"-+3"` | false |
 | `"95a54e53"` | false |
 
+## Simple function skeleton
+
+This is the minimal skeleton to practice from:
+
+```python
+def is_valid_number(s: str) -> bool:
+    # TODO: decide whether s represents a valid number.
+    return False
+```
+
+A manual loop attempt might start like this:
+
+```python
+def is_valid_number(s: str) -> bool:
+    s = s.strip()
+    if not s:
+        return False
+
+    for ch in s:
+        if ch not in "0123456789+-eE.":
+            return False
+
+    # TODO: validate signs, decimal point, exponent, and digit requirements.
+    return False
+```
+
+The syntax I wanted was:
+
+```python
+if ch not in "0123456789":
+    return False
+```
+
+Not:
+
+```python
+if ch is not in "0123456789":
+    return False
+```
+
+## Python regex solution
+
+If the accepted grammar is normal decimal/scientific notation, a compact regex solution is:
+
+```python
+import re
+
+
+def is_valid_number(s: str) -> bool:
+    s = s.strip()
+    if not s:
+        return False
+
+    pattern = r"^[+-]?((\d+(\.\d*)?)|(\.\d+))([eE][+-]?\d+)?$"
+    return re.fullmatch(pattern, s) is not None
+```
+
+This accepts examples like `"0"`, `"0.1"`, `".1"`, `"1."`, `"+.8"`, `"2e10"`, `"-90E3"`, and `"46.e3"`.
+
+It rejects examples like `""`, `"abc"`, `"1 a"`, `"1e"`, `"e3"`, `"."`, `"--6"`, `"-+3"`, and `"95a54e53"`.
+
 ## Concrete mistake log
 
 Problem: valid number parser
@@ -93,6 +154,7 @@ Forgot / missed:
 
 - Regex did not come to mind.
 - Python string comparison / character-check syntax was not automatic under pressure.
+- The correct Python membership check is `if ch not in "0123456789":`, not `if ch is not in "0123456789":`.
 - I started coding before pinning down the grammar and examples.
 - I did not have a practiced fallback sequence for this kind of validation problem.
 
