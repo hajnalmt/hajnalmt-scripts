@@ -13,9 +13,12 @@ A function skeleton was provided. I started writing a `for` loop, but I froze on
 
 - I did not think of using a regular expression during the interview.
 - I started writing a manual character-by-character loop.
-- I got stuck on basic syntax for string comparison / character checks.
+- I got stuck on the basic Python membership syntax for character checks: `not in`.
 - The interviewer helped me with syntax.
-- I still do not remember the exact syntax afterward, which is a useful signal: my mind forgets easily googleable syntax under pressure.
+- After that, the interviewer asked me to extend the solution with floating point support.
+- Then they asked me to extend it again with exponent support using `e` / `E`.
+- I did not think about optional signs, floating point formats, or exponent notation up front.
+- I still did not remember the `not in` syntax afterward, which is a useful signal: my mind forgets easily googleable syntax under pressure.
 
 ## Important interpretation
 
@@ -111,14 +114,14 @@ def is_valid_number(s: str) -> bool:
     return False
 ```
 
-The syntax I wanted was:
+The syntax I forgot was the `not in` membership check:
 
 ```python
 if ch not in "0123456789":
     return False
 ```
 
-Not:
+The important correction is that Python uses `not in` as a two-word membership operator. It is not written as:
 
 ```python
 if ch is not in "0123456789":
@@ -153,8 +156,11 @@ Problem: valid number parser
 Forgot / missed:
 
 - Regex did not come to mind.
-- Python string comparison / character-check syntax was not automatic under pressure.
+- Python `not in` membership-check syntax was not automatic under pressure.
 - The correct Python membership check is `if ch not in "0123456789":`, not `if ch is not in "0123456789":`.
+- I did not think about signs (`+` / `-`) at the beginning.
+- I did not think about floating point forms such as `1.`, `.1`, and `+.8` at the beginning.
+- I did not think about exponent forms using `e` / `E`, such as `2e10`, `-90E3`, and `46.e3` at the beginning.
 - I started coding before pinning down the grammar and examples.
 - I did not have a practiced fallback sequence for this kind of validation problem.
 
