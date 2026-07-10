@@ -171,6 +171,84 @@ This accepts examples like `"0"`, `"0.1"`, `".1"`, `"1."`, `"+.8"`, `"2e10"`, `"
 
 It rejects examples like `""`, `"abc"`, `"1 a"`, `"1e"`, `"e3"`, `"."`, `"--6"`, `"-+3"`, and `"95a54e53"`.
 
+## Tests-first version
+
+My take from this failure: I should start with tests/examples first. Not because TDD is morally superior, but because examples give my brain rails when syntax memory disappears under pressure.
+
+Instead of starting with “how do I write the loop?”, the better first move is:
+
+> Before I code, I’ll write a few examples so we agree on the expected behavior.
+
+That would have exposed the actual shape of the problem before implementation: integers, signs, floating point, exponent notation, and invalid edge cases.
+
+A tests-first Python practice file could start like this:
+
+```python
+def is_valid_number(s: str) -> bool:
+    return False
+
+
+def test_valid_integers():
+    assert is_valid_number("0") is True
+    assert is_valid_number("123") is True
+    assert is_valid_number("987654") is True
+
+
+def test_rejects_empty_and_letters():
+    assert is_valid_number("") is False
+    assert is_valid_number("abc") is False
+    assert is_valid_number("12a") is False
+    assert is_valid_number("1 a") is False
+
+
+def test_optional_sign():
+    assert is_valid_number("-123") is True
+    assert is_valid_number("+123") is True
+    assert is_valid_number("--123") is False
+    assert is_valid_number("-+123") is False
+    assert is_valid_number("+") is False
+    assert is_valid_number("-") is False
+
+
+def test_floating_point():
+    assert is_valid_number("1.23") is True
+    assert is_valid_number("0.1") is True
+    assert is_valid_number(".5") is True
+    assert is_valid_number("1.") is True
+    assert is_valid_number(".") is False
+    assert is_valid_number("1.2.3") is False
+
+
+def test_exponent():
+    assert is_valid_number("1e10") is True
+    assert is_valid_number("1E10") is True
+    assert is_valid_number("-90E3") is True
+    assert is_valid_number("1e-10") is True
+    assert is_valid_number("1e+10") is True
+    assert is_valid_number("46.e3") is True
+
+    assert is_valid_number("1e") is False
+    assert is_valid_number("e3") is False
+    assert is_valid_number("1e1.5") is False
+    assert is_valid_number("1e1e2") is False
+
+
+def test_whitespace():
+    assert is_valid_number(" 0.1 ") is True
+    assert is_valid_number("  ") is False
+    assert is_valid_number(" 1 a ") is False
+```
+
+The interview implementation path should then be incremental:
+
+1. Make integers pass.
+2. Add optional leading sign.
+3. Add floating point support.
+4. Add exponent support.
+5. Re-check invalid edge cases.
+
+The important lesson is that tests/examples are not extra work. For this kind of task, they are the safest way to discover the grammar and reduce panic.
+
 ## Concrete mistake log
 
 Problem: valid number parser
@@ -232,7 +310,7 @@ Add later:
 - The exact Python syntax that caused the freeze.
 - A clean Python solution.
 - A clean Go solution.
-- Tests.
+- A clean tests file in the actual problem directory.
 - What I would say in an interview next time.
 
 ## Reframe
