@@ -1,0 +1,19 @@
+{
+  "name": "Daily Volcano PR review sweep",
+  "script": "/home/hermes/work/private/hajnalmt-scripts/hermes/volcano-daily-review-sweep/volcano_daily_review_candidates.py",
+  "no_agent": false,
+  "schedule": {
+    "kind": "cron",
+    "expr": "0 5 * * *",
+    "display": "0 5 * * *"
+  },
+  "deliver": "origin",
+  "workdir": "/home/hermes/work/oss/volcano",
+  "prompt_notes": [
+    "Use the attached script output as the candidate list and obey its Review budget for the agent section.",
+    "Run gh api rate_limit at the start and near the end of the agent review.",
+    "Stop deep inspection and continue lightweight triage only if core remaining is below 1000.",
+    "Enforce hard per-run budgets unless the script gives stricter limits: at most 5 heavy PR inspections, 3 gh pr diff calls, and 5 review-comment fetches.",
+    "Never burn heavy budget on overflow or unchanged author-waiting PRs."
+  ]
+}
