@@ -1,0 +1,20 @@
+{
+  "name": "Daily RTK pilot sweep",
+  "script": "/home/hermes/work/private/hajnalmt-scripts/hermes/rtk-daily-pilot-sweep/rtk_daily_pilot_candidates.py",
+  "no_agent": false,
+  "schedule": {
+    "kind": "cron",
+    "expr": "15 6 * * *",
+    "display": "15 6 * * *"
+  },
+  "deliver": "origin",
+  "workdir": "/home/hermes/work/oss/rtk",
+  "prompt_notes": [
+    "Use the attached script output as the candidate list and obey its Review budget for the agent section.",
+    "Run gh api rate_limit at the start and near the end of the agent review.",
+    "Do not post GitHub comments or mutate rtk-ai/rtk unless Máté explicitly asks.",
+    "Stop deep inspection and continue lightweight triage only if core remaining is below 1000.",
+    "Enforce hard per-run budgets unless the script gives stricter limits: at most 5 heavy PR inspections, 5 issue triage inspections, 3 gh pr diff calls, and 5 comment/review-comment fetches combined.",
+    "For local review, verify pwd and git branch first. The correct repo is rtk-ai/rtk on develop."
+  ]
+}

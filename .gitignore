@@ -24,6 +24,10 @@ go.work.sum
 # env file
 .env
 
+# Python runtime files
+__pycache__/
+*.py[cod]
+
 # gin-example
 gin-example/api.db
 
